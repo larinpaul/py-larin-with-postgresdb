@@ -7,15 +7,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config["SQLALCHEMY_DATABASE_URI"]='postgresql://postgres:password@localhost/students'
 db = SQLAlchemy(app)
 
 
-try:
-    result = db.engine.execute("SELECT 1")
-    print("Подключение к базе данных установлено")
-except Exception as e:
-    print("Подключение не удалось:", str(e))
 
 # Определение входных параметров и их типов данных
 input_params = {
