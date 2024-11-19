@@ -1,45 +1,59 @@
-from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request, render_template
+import pandas as pd
+import statsmodels.api as sm
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:password@localhost/students'
+# Define input parameters and their data types
+input_params = {
+    'usability': float,
+    'safety': float,
+    'flexibility': float
+}
 
-db=SQLAlchemy(app)
-
-class Student(db.Model):
-  __tablename__='students'
-  id=db.Column(db.Integer,primary_key=True)
-  fname=db.Column(db.String(40))
-  lname=db.Column(db.String(40))
-  pet=db.Column(db.String(40))
-
-  def __init__(self,fname,lname,pet):
-    self.fname=fname
-    self.lname=lname
-    self.pet=pet
-
+# Define output variable
+output_variable = 'quality'
 
 @app.route('/')
 def index():
-  return render_template('index.html')
+    return render_template('index.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
-  fname= request.form['fname']
-  lname=request.form['lname']
-  pet=request.form['pets']
+    # Get input values from form
+    usability = float(request.form['usability'])
+    safety = float(request.form['safety'])
+    flexibility = float(request.form['flexibility'])
 
-  student=Student(fname,lname,pet)
-  db.session.add(student)
-  db.session.commit()
+    # Create a pandas DataFrame to store the data
+    data = pd.DataFrame({
+        'usability': [usability],
+        'safety': [safety],
+        'flexibility': [flexibility]
+    })
 
-  #fetch a certain student2
-  studentResult=db.session.query(Student).filter(Student.id==1)
-  for result in studentResult:
-    print(result.fname)
+    # Calculate correlation matrix
+    corr_matrix = data.corr()
 
-  return render_template('success.html', data=fname)
+    # Perform regression analysis
+    X = data[['usability', 'safety', 'flexibility']]
+    y = pd.Series([1]) # dummy output variable (we'll calculate it later)
+    X = sm.add_constant(X)
+    model= sm.OLS(y, X).fit()
+
+    # Create a heatmap of the correlation matrix
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
+    plt.title('Correlation Matrix')
+    plt.savefig('static/correlation_matrix.png')
+
+    # Calculate output variable (quality)
+    quality = model.predict(X)[0]
+
+    # Render results template
+    return render_template('results.html', corr_matrix=corr_matrix, quality=quality)
 
 if __name__ == '__main__':
-    app.run(debug=True) # wil be reloaded in our browser if we change some code
+    app.run(debug=True)
