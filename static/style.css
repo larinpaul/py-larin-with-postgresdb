@@ -9,8 +9,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: black;
   color: floralwhite;
-  min-height: 110vh; /* Ensure the body covers the full viewport height */
-  position: relative; /* Ensure the pseudo-element is positioned correctly */
+  min-height: 110vh;
+  position: relative;
   text-shadow: 0 0 15px black;
 }
 
@@ -27,5 +27,5 @@ body::before {
   background-attachment: fixed;
   background-position: center;
   filter: brightness(21%);
-  z-index: -1; /* Ensure the pseudo-element is behind the content */
+  z-index: -1;
 }

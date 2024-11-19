@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
-# Define input parameters and their data types
+# Определение входных параметров и их типов данных
 input_params = {
     'usability': float,
     'safety': float,
     'flexibility': float
 }
 
-# Define output variable
+# Определение выходной переменной
 output_variable = 'quality'
 
 @app.route('/')
@@ -22,54 +22,47 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    # Get input values from form
+    # Получение входных значений из форм в html
     usability = float(request.form['usability'])
     safety = float(request.form['safety'])
     flexibility = float(request.form['flexibility'])
 
-    # Create a pandas DataFrame to store the data
+    # Создание pandas DataFrame для хранения данных
     data = pd.DataFrame({
-        'usability': [usability],
-        'safety': [safety],
-        'flexibility': [flexibility]
+        'usability': [usability, usability + 1, usability + 222],
+        'safety': [safety, safety + 333331, safety + 2],
+        'flexibility': [flexibility, flexibility + 1, flexibility + 3332]
     })
 
-    # Calculate correlation matrix
+    # Расчет матрицы корреляции
     corr_matrix = data.corr()
 
-    # Replace NaN values with 0
-    corr_matrix = corr_matrix.fillna(0)
-
-    # Perform regression analysis
-    X = data[['usability', 'safety', 'flexibility']]
-    y = pd.Series([1]) # dummy output variable (we'll calculate it later)
-    X = sm.add_constant(X)
-    model= sm.OLS(y, X).fit()
-
-    # Create a heatmap of the correlation matrix
-    plt.figure(figsize=(6, 4))  # Make the picture smaller
-    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
-    plt.title('Correlation Matrix')
-    plt.savefig('static/correlation_matrix.png', bbox_inches='tight')  # Save the picture with a tight bounding box
-
-    # Calculate output variable (quality)
-    quality = model.predict(X)[0]
-
-    # Create a regression plot
+    # Произведение регрессионного анализа
     X = data[['usability', 'safety']]
     y = data['flexibility']
     X = sm.add_constant(X)
     model = sm.OLS(y, X).fit()
+
+    #  Создание "тепловой карты" матрицы корреляции
+    plt.figure(figsize=(5, 3))  # Размер картинки 5 на 3
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
+    plt.title('Correlation Matrix')
+    plt.savefig('static/correlation_matrix.png', bbox_inches='tight')  # Save the picture with a tight bounding box
+
+    # Расчет переменной (качество)
+    quality = model.predict(X)[0]
+
+    # Создание регрессионного графика
     y_pred = model.predict(X)
-    plt.figure(figsize=(6, 4))  # Make the picture smaller
+    plt.figure(figsize=(4, 2))  # Размер картинки 4 на 2
     plt.scatter(X['usability'], y)
     plt.plot(X['usability'], y_pred, color='red')
     plt.title('Regression Plot')
     plt.xlabel('Usability')
     plt.ylabel('Flexibility')
-    plt.savefig('static/regression_plot.png', bbox_inches='tight')  # Save the picture with a tight bounding box
+    plt.savefig('static/regression_plot.png', bbox_inches='tight')
 
-    # Render results template
+    # Рендеринг результатов
     return render_template('results.html', corr_matrix=corr_matrix, quality=quality)
 
 if __name__ == '__main__':
