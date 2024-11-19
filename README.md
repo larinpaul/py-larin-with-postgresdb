@@ -28,6 +28,7 @@
 
 * Python
 * Flask
+* PostgreSQL
 * Pandas
 * NumPy
 * Matplotlib
