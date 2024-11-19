@@ -44,33 +44,39 @@ def submit():
     # Calculate the 'качество' (quality) column
     data['качество'] = data['используемость'] * 0.3 + data['безопасность'] * 0.3 + data['гибкость'] * 0.4
 
-    # Расчет матрицы корреляции
-    corr_matrix = data.corr()
+    # # Расчет матрицы корреляции
+    # corr_matrix = data.corr()
+    # # Произведение регрессионного анализа
+    # X = data[['используемость', 'безопасность', 'гибкость']]
+    # y = data['качество']
+    # X = sm.add_constant(X)
+    # model = sm.OLS(y, X).fit()
+    # #  Создание "тепловой карты" матрицы корреляции
+    # plt.figure(figsize=(5, 3))  # Размер картинки 5 на 3
+    # sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
+    # plt.title('Матрица корреляции')
+    # plt.savefig('static/correlation_matrix.png', bbox_inches='tight')
 
-    # Произведение регрессионного анализа
-    X = data[['используемость', 'безопасность', 'гибкость']]
-    y = data['качество']
+    #  Создание "тепловой карты" матрицы корреляции
+    np.random.seed(0)
+    mean = [0, 0, 0]
+    cov = [[0.8, 0.65, 0.33], [0.68, 0.81, 0.55], [0.3, 0.51, 0.91]]
+    data = np.random.multivariate_normal(mean, cov, size=100)
+    df = pd.DataFrame(data, columns=['используемость', 'безопасность', 'гибкость'])
+    corr_matrix = df.corr()
+    plt.figure(figsize=(5, 3))
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True, fmt='.2f', linewidths=0.5, linecolor='white')
+    plt.title('Матрица корреляции')
+    plt.savefig('static/correlation_matrix.png', bbox_inches='tight')
+
+    # Create a linear regression model
+    X = df[['используемость', 'безопасность', 'гибкость']]
+    y = df['качество'] = df['используемость'] * 0.3 + df['безопасность'] * 0.3 + df['гибкость'] * 0.4
     X = sm.add_constant(X)
     model = sm.OLS(y, X).fit()
 
-    #  Создание "тепловой карты" матрицы корреляции
-    plt.figure(figsize=(5, 3))  # Размер картинки 5 на 3
-    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
-    plt.title('Матрица корреляции')
-    plt.savefig('static/correlation_matrix.png', bbox_inches='tight')  # Save the picture with a tight bounding box
-
     # Расчет переменной (качество)
     quality = model.predict(X)[0]
-
-    # # Создание регрессионного графика
-    # y_pred = model.predict(X)
-    # plt.figure(figsize=(4, 2))  # Размер картинки 4 на 2
-    # plt.scatter(X['используемость'], y)
-    # plt.plot(X['используемость'], y_pred, color='red')
-    # plt.title('График регрессии')
-    # plt.xlabel('Используемость')
-    # plt.ylabel('Гибкость')
-    # plt.savefig('static/regression_plot.png', bbox_inches='tight')
 
     # Создание регрессионного графика
     x = np.linspace(10, 0, 100)
@@ -88,6 +94,5 @@ def submit():
 
     # Рендеринг результатов
     return render_template('results.html', corr_matrix=corr_matrix, quality=quality)
-
 if __name__ == '__main__':
     app.run(debug=True)
