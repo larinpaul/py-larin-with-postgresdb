@@ -11,7 +11,6 @@ app.config["SQLALCHEMY_DATABASE_URI"]='postgresql://postgres:password@localhost/
 db = SQLAlchemy(app)
 
 
-
 # Определение входных параметров и их типов данных
 input_params = {
     'usability': float,
