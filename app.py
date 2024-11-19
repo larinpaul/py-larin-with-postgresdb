@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost/students'
+# app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost/students'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
