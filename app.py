@@ -5,10 +5,12 @@ import pandas as pd
 import statsmodels.api as sm
 import seaborn as sns
 import matplotlib.pyplot as plt
+from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"]='postgresql://postgres:password@localhost/students'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:password@localhost/students'
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 # Определение входных параметров и их типов данных
