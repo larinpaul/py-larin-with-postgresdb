@@ -2,10 +2,21 @@ body {
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
   background-color: black;
+  position: relative; /* Ensure the pseudo-element is positioned correctly */
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-image: url('/static/background.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
-  filter: brightness(50%);
+  filter: brightness(50%); /* Adjust the brightness to your liking */
+  z-index: -1; /* Ensure the pseudo-element is behind the content */
 }
