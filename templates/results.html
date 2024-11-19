@@ -10,10 +10,12 @@
     <h3>Матрица корреляции:</h3>
     <pre>{{ corr_matrix }}</pre>
     <h3>Матрица корреляции:</h3>
-    <div style="text-align: center;"><img src="{{ url_for('static', filename='correlation_matrix.png') }}" alt="Correlation Matrix">
+    <div style="text-align: center;">
+        <img src="{{ url_for('static', filename='correlation_matrix.png') }}" alt="Correlation Matrix">
     </div>
     <h3>Регрессионная зависимость:</h3>
-    <div style="text-align: center;"><img src="{{ url_for('static', filename='regression_plot.png') }}" alt="Regression Plot">
+    <div style="text-align: center;">
+        <img src="{{ url_for('static', filename='regression_plot.png') }}" alt="Regression Plot">
     </div>
     <h2>Прогноз качества согласно регрессионному анализу:</h2>
     <p>{{ quality }}</p>
