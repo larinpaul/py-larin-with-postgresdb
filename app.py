@@ -16,9 +16,10 @@ app = Flask(__name__)
 
 # Определение входных параметров и их типов данных
 input_params = {
-    'используемость': float,
-    'безопасность': float,
-    'гибкость': float
+    'полнота': float,
+    'корректность': float,
+    'удобство': float,
+    'защищенность': float
 }
 
 # Определение выходной переменной
@@ -31,18 +32,20 @@ def index():
 @app.route('/submit', methods=['POST'])
 def submit():
     # Получение входных значений из форм в html
-    usability = float(request.form['используемость'])
-    safety = float(request.form['безопасность'])
-    flexibility = float(request.form['гибкость'])
+    completeness = float(request.form['полнота'])
+    correctness = float(request.form['корректность'])
+    usability = float(request.form['удобство'])
+    security = float(request.form['защищенность'])
 
     # Создание pandas DataFrame для хранения данных
     data = pd.DataFrame({
-        'используемость': [usability, usability + 1, usability + 222],
-        'безопасность': [safety, safety + 333331, safety + 2],
-        'гибкость': [flexibility, flexibility + 1, flexibility + 3332]
+        'полнота': [completeness, completeness + 1, completeness + 222],
+        'корректность': [correctness, correctness + 333331, correctness + 2],
+        'удобство': [usability, usability + 1, usability + 3332],
+        'защищенность': [security, security + 1, security + 3332]
     })
     # Calculate the 'качество' (quality) column
-    data['качество'] = data['используемость'] * 0.3 + data['безопасность'] * 0.3 + data['гибкость'] * 0.4
+    data['качество'] = data['полнота'] * 0.25 + data['корректность'] * 0.25 + data['удобство'] * 0.25 + data['защищенность'] * 0.25
 
     # # Расчет матрицы корреляции
     # corr_matrix = data.corr()
@@ -59,10 +62,10 @@ def submit():
 
     #  Создание "тепловой карты" матрицы корреляции
     np.random.seed(0)
-    mean = [0, 0, 0]
-    cov = [[0.8, 0.65, 0.33], [0.68, 0.81, 0.55], [0.3, 0.51, 0.91]]
+    mean = [0, 0, 0, 0]
+    cov = [[0.98, 0.95, 0.85, 0.9], [0.95, 1, 0.8, 0.85], [0.85, 0.8, 1, 0.9], [0.9, 0.85, 0.9, 1]]
     data = np.random.multivariate_normal(mean, cov, size=100)
-    df = pd.DataFrame(data, columns=['используемость', 'безопасность', 'гибкость'])
+    df = pd.DataFrame(data, columns=['полнота', 'корректность', 'удобство', 'защищенность'])
     corr_matrix = df.corr()
     plt.figure(figsize=(5, 3))
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True, fmt='.2f', linewidths=0.5, linecolor='white')
@@ -70,13 +73,14 @@ def submit():
     plt.savefig('static/correlation_matrix.png', bbox_inches='tight')
 
     # Create a linear regression model
-    X = df[['используемость', 'безопасность', 'гибкость']]
-    y = df['качество'] = df['используемость'] * 0.3 + df['безопасность'] * 0.3 + df['гибкость'] * 0.4
+    X = df[['полнота', 'корректность', 'удобство']]
+    y = df['защищенность']
     X = sm.add_constant(X)
     model = sm.OLS(y, X).fit()
 
     # Расчет переменной (качество)
-    quality = model.predict(X)[0]
+    quality = (completeness + correctness + usability + security) / 4
+    quality = max(0, min(quality, 10))  # Ensure quality is between 0 and 10
 
     # Создание регрессионного графика
     x = np.linspace(10, 0, 100)
