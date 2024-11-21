@@ -47,19 +47,6 @@ def submit():
     # Calculate the 'качество' (quality) column
     data['качество'] = data['полнота'] * 0.25 + data['корректность'] * 0.25 + data['удобство'] * 0.25 + data['защищенность'] * 0.25
 
-    # # Расчет матрицы корреляции
-    # corr_matrix = data.corr()
-    # # Произведение регрессионного анализа
-    # X = data[['используемость', 'безопасность', 'гибкость']]
-    # y = data['качество']
-    # X = sm.add_constant(X)
-    # model = sm.OLS(y, X).fit()
-    # #  Создание "тепловой карты" матрицы корреляции
-    # plt.figure(figsize=(5, 3))  # Размер картинки 5 на 3
-    # sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
-    # plt.title('Матрица корреляции')
-    # plt.savefig('static/correlation_matrix.png', bbox_inches='tight')
-
     #  Создание "тепловой карты" матрицы корреляции
     np.random.seed(0)
     mean = [0, 0, 0, 0]
